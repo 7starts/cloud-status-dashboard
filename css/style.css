@@ -437,7 +437,7 @@ header {
 
 @media (max-width: 768px) {
   .page { padding: 14px 14px 32px; }
-  .header-inner { padding: 0 14px; height: 56px; }
+  .header-inner { padding: 8px 14px; height: auto; }
   .logo-sub { display: none; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .stat-val { font-size: 26px; }
@@ -992,7 +992,9 @@ p.ir-subtitle { margin: 3px 0 0; font-size: .8rem; color: var(--muted); }
 
 /* ── Responsive adjustments ──────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .view-nav { display: none; }          /* collapse into logo area on small screens */
+  .header-inner { height: auto; flex-wrap: wrap; padding: 8px 14px; gap: 8px; }
+  .view-nav { order: 3; width: 100%; justify-content: center; border-radius: 6px; }
+  .view-btn { flex: 1; justify-content: center; }
 }
 @media (max-width: 768px) {
   .ir-filter-row { gap: 8px; }
@@ -1000,6 +1002,5 @@ p.ir-subtitle { margin: 3px 0 0; font-size: .8rem; color: var(--muted); }
   .ir-table { min-width: 560px; }
 }
 @media (max-width: 480px) {
-  .view-nav { display: none; }
   .ir-title { font-size: 1.1rem; }
 }
