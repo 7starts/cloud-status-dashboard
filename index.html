@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    Content Security Policy
+    ─────────────────────────────────────────────────────────────────────────
+    • script-src 'self'          – only scripts served from this origin
+    • style-src  'self'          – only stylesheets from this origin
+    • connect-src                – whitelist of all origins fetch() may reach
+    • frame-ancestors 'none'     – cannot be embedded in iframes (clickjacking)
+    • form-action  'none'        – no form submissions to external targets
+    • base-uri     'self'        – disallow <base> tag injection
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    script-src  'self';
+    style-src   'self';
+    connect-src
+      https://ocistatus.oraclecloud.com
+      https://azure.status.microsoft
+      https://rssfeed.azure.status.microsoft
+      https://status.aws.amazon.com
+      https://health.aws.amazon.com
+      https://status.cloud.google.com
+      https://api.allorigins.win
+      https://api.codetabs.com
+      https://corsproxy.io
+      https://corsproxy.org
+      https://api.cors.lol
+      https://www.gstatic.com
+      https://ip-ranges.amazonaws.com
+      https://docs.oracle.com
+      https://download.microsoft.com;
+    img-src     'self' data:;
+    object-src  'none';
+    frame-src   'none';
+    form-action 'none';
+    base-uri    'self';
+  " />
+
+  <!-- ── SEO: core ──────────────────────────────────────────────────────────── -->
+  <title>Cloud Status Dashboard &mdash; OCI, Azure, AWS &amp; GCP Incidents + IP Ranges</title>
+  <meta name="description"
+        content="Real-time unified cloud status monitor for Oracle Cloud (OCI), Microsoft Azure, Amazon Web Services (AWS), and Google Cloud (GCP). Track live incidents, outages, service disruptions, and look up public IP address ranges across all four major cloud providers." />
+  <meta name="keywords"
+        content="cloud status, Azure status, AWS status, GCP status, OCI status, cloud incidents, cloud outages, Azure downtime, AWS downtime, Google Cloud downtime, Oracle Cloud downtime, cloud IP ranges, public IP ranges, cloud monitoring" />
+  <meta name="author"    content="Cloud Status Dashboard" />
+  <meta name="robots"    content="index, follow" />
+  <meta name="theme-color" content="#1A1A2E" />
+
+  <!-- ── SEO: canonical (update to your deployed URL) ──────────────────────── -->
+  <!-- <link rel="canonical" href="https://your-domain.com/" /> -->
+
+  <!-- ── SEO: favicon (SVG inline data URI) ────────────────────────────────── -->
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231A1A2E'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='white'%3E%E2%98%81%3C/text%3E%3C/svg%3E" />
+
+  <!-- ── SEO: Open Graph (Facebook, LinkedIn, Slack, Discord …) ────────────── -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:site_name"   content="Cloud Status Dashboard" />
+  <meta property="og:title"       content="Cloud Status Dashboard &mdash; OCI, Azure, AWS &amp; GCP" />
+  <meta property="og:description" content="Real-time incident tracking and IP range lookup for Oracle Cloud, Microsoft Azure, AWS, and Google Cloud — all in one place." />
+  <!-- <meta property="og:url"   content="https://your-domain.com/" /> -->
+  <!-- <meta property="og:image" content="https://your-domain.com/og-image.png" /> -->
+
+  <!-- ── SEO: Twitter / X Card ─────────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="Cloud Status Dashboard &mdash; OCI, Azure, AWS &amp; GCP" />
+  <meta name="twitter:description" content="Real-time incident tracking and IP range lookup for all four major cloud providers." />
+
+  <!-- ── Performance: early DNS + connection hints ─────────────────────────── -->
+  <link rel="preconnect"    href="https://api.allorigins.win" />
+  <link rel="preconnect"    href="https://ip-ranges.amazonaws.com" />
+  <link rel="preconnect"    href="https://www.gstatic.com" />
+  <link rel="dns-prefetch"  href="https://corsproxy.io" />
+  <link rel="dns-prefetch"  href="https://corsproxy.org" />
+  <link rel="dns-prefetch"  href="https://api.cors.lol" />
+  <link rel="dns-prefetch"  href="https://docs.oracle.com" />
+  <link rel="dns-prefetch"  href="https://download.microsoft.com" />
+
+  <!-- ── SEO: Structured data (JSON-LD) ────────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cloud Status Dashboard",
+    "description": "Real-time unified cloud incident monitoring and IP address range lookup for Oracle Cloud (OCI), Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP).",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "Real-time cloud incident monitoring",
+      "Live status for Oracle Cloud, Azure, AWS, and Google Cloud",
+      "Incident filtering by provider, status, region, and service",
+      "Public cloud IP address range lookup",
+      "IP range filtering by provider, region, service, and CIDR"
+    ]
+  }
+  </script>
+
+  <!-- Prevent leaking the page URL as Referer to external services -->
+  <meta name="referrer" content="no-referrer" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark" aria-hidden="true">&#9729;</div>
+      <div class="logo-text">
+        <h1 class="logo-title"><span>Cloud</span> Status Dashboard</h1>
+        <p class="logo-sub">OCI &middot; Azure &middot; AWS &middot; GCP &mdash; unified view</p>
+      </div>
+    </div>
+
+    <!-- ── View switcher ── -->
+    <nav class="view-nav" aria-label="Feature navigation">
+      <button class="view-btn active" id="viewBtnDashboard"
+              aria-pressed="true" title="Incident status dashboard">
+        &#9729; Status Dashboard
+      </button>
+      <button class="view-btn" id="viewBtnIpRanges"
+              aria-pressed="false" title="Public IP address ranges">
+        &#11041; IP Ranges
+      </button>
+    </nav>
+
+    <div class="header-right">
+      <div class="live-chip">
+        <div class="live-dot" id="liveDot" aria-hidden="true"></div>
+        <span id="lastUpdated">Loading&hellip;</span>
+      </div>
+      <button class="btn-refresh" id="btnRefresh" aria-label="Refresh all providers">
+        <span class="spin" aria-hidden="true">&#8635;</span>
+        <span>Refresh</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN (Status Dashboard) ── -->
+<main class="page" id="dashboardMain">
+
+  <!-- Summary stats -->
+  <div class="stats-grid" aria-label="Incident statistics">
+    <div class="stat-card s-total">
+      <div class="stat-val" id="sTotal">—</div>
+      <div class="stat-lbl">Total Incidents</div>
+    </div>
+    <div class="stat-card s-active">
+      <div class="stat-val" id="sActive">—</div>
+      <div class="stat-lbl">Active / Identified</div>
+    </div>
+    <div class="stat-card s-monitor">
+      <div class="stat-val" id="sMonitor">—</div>
+      <div class="stat-lbl">Monitoring</div>
+    </div>
+    <div class="stat-card s-resolved">
+      <div class="stat-val" id="sResolved">—</div>
+      <div class="stat-lbl">Resolved</div>
+    </div>
+  </div>
+
+  <!-- Per-provider load status -->
+  <div class="provider-bar" id="providerBar" aria-label="Provider status"></div>
+
+  <!-- ── Tab navigation ── -->
+  <nav class="tab-nav" role="tablist" aria-label="View tabs">
+    <button class="tab-btn active" id="tabBtnStatus"
+            role="tab" aria-selected="true" aria-controls="tab-status">
+      Provider Status
+    </button>
+    <button class="tab-btn" id="tabBtnOngoing"
+            role="tab" aria-selected="false" aria-controls="tab-ongoing">
+      Ongoing
+      <span class="tab-badge badge-alert" id="tabBadgeOngoing">—</span>
+    </button>
+    <button class="tab-btn" id="tabBtnHistory"
+            role="tab" aria-selected="false" aria-controls="tab-history">
+      History
+      <span class="tab-badge" id="tabBadgeHistory">—</span>
+    </button>
+  </nav>
+
+  <!-- ── Tab: History (all incidents + filters) ── -->
+  <div class="tab-panel is-hidden" id="tab-history" role="tabpanel" aria-labelledby="tabBtnHistory">
+    <h2 class="sr-only">Incident History</h2>
+
+    <!-- Filter panel -->
+    <div class="filter-panel open" id="filterPanel" role="search" aria-label="Filter incidents">
+      <button class="filter-toggle" id="filterToggle" aria-expanded="true" aria-controls="filterBody">
+        <div class="filter-toggle-left">
+          <span>Filters</span>
+          <span class="filter-active-count is-hidden-badge" id="filterActiveCount">0</span>
+        </div>
+        <span class="filter-arrow" aria-hidden="true">&#9662;</span>
+      </button>
+
+      <div class="filter-body" id="filterBody">
+        <!-- Search -->
+        <div class="filter-row search-row">
+          <div class="f-group">
+            <label class="f-label" for="fSearch">Search</label>
+            <input type="search" class="f-control" id="fSearch"
+                   placeholder="Search service, region, reference ID, description&hellip;"
+                   maxlength="200" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+
+        <!-- Dropdowns + date range -->
+        <div class="filter-row">
+          <div class="f-group">
+            <label class="f-label" for="fProvider">Provider</label>
+            <div class="sel-wrap">
+              <select class="f-control" id="fProvider">
+                <option value="">All Providers</option>
+                <option value="oci">Oracle Cloud (OCI)</option>
+                <option value="azure">Microsoft Azure</option>
+                <option value="aws">Amazon Web Services</option>
+                <option value="gcp">Google Cloud</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="fStatus">Status</label>
+            <div class="sel-wrap">
+              <select class="f-control" id="fStatus">
+                <option value="">All Statuses</option>
+                <option value="resolved">Resolved</option>
+                <option value="monitoring">Monitoring</option>
+                <option value="identified">Identified</option>
+                <option value="investigating">Investigating</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="fRegion">Region</label>
+            <div class="sel-wrap">
+              <select class="f-control" id="fRegion">
+                <option value="">All Regions</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="fService">Service</label>
+            <div class="sel-wrap">
+              <select class="f-control" id="fService">
+                <option value="">All Services</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="fDashboard">Dashboard</label>
+            <div class="sel-wrap">
+              <select class="f-control" id="fDashboard">
+                <option value="">All Dashboards</option>
+                <option value="Networking">Networking</option>
+                <option value="Compute">Compute</option>
+                <option value="Storage">Storage</option>
+                <option value="Database">Database</option>
+                <option value="Security">Security &amp; Identity</option>
+                <option value="Integration">Integration &amp; Messaging</option>
+                <option value="AI &amp; Analytics">AI &amp; Analytics</option>
+                <option value="Management">Management &amp; Governance</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="fFrom">From</label>
+            <input type="date" class="f-control" id="fFrom" />
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="fTo">To</label>
+            <input type="date" class="f-control" id="fTo" />
+          </div>
+        </div>
+
+        <div class="filter-footer">
+          <span class="filter-hint" id="filterHint">Use filters to narrow results</span>
+          <button class="btn-clear" id="btnClearFilters">&#10005; Clear All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results toolbar -->
+    <div class="results-bar">
+      <div class="results-count" id="resultsCount" aria-live="polite" aria-atomic="true">
+        Loading incidents&hellip;
+      </div>
+      <div class="sort-row">
+        <label for="sortSel">Sort:</label>
+        <div class="sort-wrap">
+          <select class="sort-sel" id="sortSel">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="service">Service A&ndash;Z</option>
+            <option value="region">Region A&ndash;Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Incident list -->
+    <div id="incidentsList" role="list" aria-label="Incidents"></div>
+
+  </div><!-- /tab-history -->
+
+  <!-- ── Tab: Ongoing (active incidents only) ── -->
+  <div class="tab-panel is-hidden" id="tab-ongoing" role="tabpanel" aria-labelledby="tabBtnOngoing">
+    <h2 class="sr-only">Ongoing Incidents</h2>
+    <div id="ongoingContent" aria-live="polite"></div>
+  </div>
+
+  <!-- ── Tab: Provider Status ── -->
+  <div class="tab-panel" id="tab-status" role="tabpanel" aria-labelledby="tabBtnStatus">
+    <h2 class="sr-only">Provider Status Overview</h2>
+    <div id="statusContent" aria-live="polite"></div>
+  </div>
+
+</main>
+
+<!-- ── IP Ranges Panel ── -->
+<section class="ip-ranges-panel is-hidden" id="ipRangesPanel" aria-label="Cloud IP Ranges">
+  <div class="page ir-page">
+
+    <!-- Panel header -->
+    <div class="ir-header">
+      <div class="ir-title-row">
+        <span class="ir-icon" aria-hidden="true">&#11041;</span>
+        <div class="ir-title-text">
+          <h2 class="ir-title">Cloud IP Ranges</h2>
+          <p class="ir-subtitle">Public IP address ranges for GCP &middot; Azure &middot; AWS &middot; OCI</p>
+        </div>
+        <button class="btn-refresh ir-reload-btn" id="irReload" aria-label="Reload IP ranges">
+          <span class="spin" aria-hidden="true">&#8635;</span>
+          <span>Reload</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Provider load status -->
+    <div class="provider-bar" id="irProviderBar" aria-label="IP ranges load status"></div>
+
+    <!-- Filters -->
+    <div class="ir-filters">
+      <div class="ir-filter-row">
+
+        <div class="f-group">
+          <label class="f-label" for="irProvider">Provider</label>
+          <div class="sel-wrap">
+            <select class="f-control" id="irProvider">
+              <option value="">All Providers</option>
+              <option value="gcp">Google Cloud</option>
+              <option value="azure">Microsoft Azure</option>
+              <option value="aws">Amazon Web Services</option>
+              <option value="oci">Oracle Cloud</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label" for="irRegion">Region</label>
+          <div class="sel-wrap">
+            <select class="f-control" id="irRegion">
+              <option value="">All Regions</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="f-group ir-search-group">
+          <label class="f-label" for="irSearch">Search IP / CIDR / Service</label>
+          <input type="search" class="f-control" id="irSearch"
+                 placeholder="e.g. 34.80.0.0  or  EC2  or  westus"
+                 maxlength="100" autocomplete="off" spellcheck="false" />
+        </div>
+
+        <div class="f-group">
+          <label class="f-label" for="irSort">Sort by</label>
+          <div class="sel-wrap">
+            <select class="f-control" id="irSort">
+              <option value="provider">Provider</option>
+              <option value="service">Service</option>
+              <option value="region">Region</option>
+              <option value="cidr">IP Range</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="f-group f-group-btn">
+          <label class="f-label">&nbsp;</label>
+          <button class="ir-sort-dir-btn" id="irSortDir"
+                  title="Toggle sort direction" aria-label="Toggle sort direction">&#8593;</button>
+        </div>
+
+        <div class="f-group f-group-btn">
+          <label class="f-label">&nbsp;</label>
+          <button class="btn-clear" id="irClear">&#10005; Clear</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Results count -->
+    <div class="results-bar">
+      <div class="results-count" id="irCount" aria-live="polite" aria-atomic="true">
+        Loading IP ranges&hellip;
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="ir-table-wrap" id="irTableWrap">
+      <table class="ir-table" aria-label="Cloud IP address ranges">
+        <thead>
+          <tr>
+            <th scope="col">Provider</th>
+            <th scope="col">Service</th>
+            <th scope="col">Region</th>
+            <th scope="col">IP Range</th>
+            <th scope="col">Type</th>
+            <th scope="col">Additional Info</th>
+          </tr>
+        </thead>
+        <tbody id="irTableBody">
+          <tr>
+            <td colspan="6" class="ir-empty">
+              <div class="spinner"></div>
+              <div>Switch to IP Ranges to load data.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div id="irPagination" class="ir-pagination-wrap"></div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer" aria-label="Site information">
+  <div class="footer-inner">
+    <p class="footer-desc">
+      <strong>Cloud Status Dashboard</strong> &mdash; real-time incident tracking and public IP range
+      lookup for <abbr title="Oracle Cloud Infrastructure">OCI</abbr>,
+      <abbr title="Microsoft Azure">Azure</abbr>,
+      <abbr title="Amazon Web Services">AWS</abbr>, and
+      <abbr title="Google Cloud Platform">GCP</abbr>.
+      Data is fetched directly from official provider status feeds.
+    </p>
+    <p class="footer-note">
+      Incident data refreshes every 5&nbsp;minutes &middot; IP ranges sourced from official provider JSON feeds.
+    </p>
+  </div>
+</footer>
+
+<!--
+  Script load order matters — each file extends window.StatusDash
+  utils  → fetcher → providers/* → providers/index → app → ip-ranges
+-->
+<script src="js/utils.js"></script>
+<script src="js/fetcher.js"></script>
+<script src="js/providers/oci.js"></script>
+<script src="js/providers/azure.js"></script>
+<script src="js/providers/aws.js"></script>
+<script src="js/providers/gcp.js"></script>
+<script src="js/providers/index.js"></script>
+<script src="js/app.js"></script>
+<script src="js/ip-ranges.js"></script>
+
+</body>
+</html>
