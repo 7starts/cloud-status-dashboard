@@ -17,7 +17,7 @@ window.StatusDash.ipRanges = (function () {
     { id: 'oci',   name: 'Oracle Cloud',        color: '#C74634',
       url: 'https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json' },
     { id: 'azure', name: 'Microsoft Azure',     color: '#0078D4',
-      url: 'https://download.microsoft.com/download/7/1/d/71d86715-5596-4529-9b13-da13a5de5b63/ServiceTags_Public_20260323.json' },
+      url: 'https://download.microsoft.com/download/7/1/d/71d86715-5596-4529-9b13-da13a5de5b63/ServiceTags_Public_20260406.json' },
   ];
 
   const PAGE_SIZE = 100;
